@@ -119,14 +119,19 @@
   import RecommendView from './childComps/RecommendView'
   import FeatureView from './childComps/FeatureView'
 
-  import {getHomeMultidata} from 'network/home'
+  import {getHomeMultidata, getHomeGoods} from 'network/home'
 
   export default {
     name: "home",
     data() {
       return {
         banners: [],
-        recommends: []
+        recommends: [],
+        goods: {
+          'pop':{page: 0, list: []},
+          'new':{page: 0, list: []},
+          'sell':{page: 0, list: []}
+        }
       }
     },
     components: {
@@ -137,13 +142,25 @@
       FeatureView
     },
     methods: {
-
+      getHomeMultidata() {
+        getHomeMultidata().then(res => {
+          this.banners = res.data.banner.list;
+          this.recommends = res.data.recommend.list;
+        })
+      },
+      getHomeGoods(type) {
+        const page = this.goods[type].page + 1;
+        getHomeGoods(type, page).then(res => {
+          this.goods[type].list.push(...res.data.list)
+          this.goods[type].page +=1
+        })
+      }
     },
     created() {
-      getHomeMultidata().then(res => {
-        this.banners = res.data.banner.list;
-        this.recommends = res.data.recommend.list;
-      })
+      this.getHomeMultidata(),
+      this.getHomeGoods('pop')
+      this.getHomeGoods('new')
+      this.getHomeGoods('sell')
     }
   }
 </script>
