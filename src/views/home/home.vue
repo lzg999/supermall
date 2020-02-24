@@ -3,18 +3,22 @@
     <nav-bar class="home-nav">
       <div slot="center">首页</div>
     </nav-bar>
-    <home-swiper :banners="banners" />
-    <Recommend-view :recommends="recommends"/>
-    <feature-view />
-    <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"/>
-    <goods-list :goods="showgoods"/>
+    <scroll class="content-scroll">
+      <home-swiper :banners="banners" />
+      <Recommend-view :recommends="recommends"/>
+      <feature-view />
+      <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"/>
+      <goods-list :goods="showgoods"/>
+    </scroll>
   </div>
 </template>
 
 <script>
   import NavBar from 'components/common/navbar/NavBar'
+  import Scroll from 'components/common/scroll/Scroll'
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goods/GoodsList'
+
   import HomeSwiper from './childComps/HomeSwiper'
   import RecommendView from './childComps/RecommendView'
   import FeatureView from './childComps/FeatureView'
@@ -38,6 +42,7 @@
     },
     components: {
       NavBar,
+      Scroll,
       TabControl,
       GoodsList,
       HomeSwiper,
@@ -94,6 +99,7 @@
 <style scoped>
   .container {
     padding-top: 44px;
+    height: 100vh;
   }
   .home-nav {
     background-color: var(--color-tint);
@@ -108,5 +114,9 @@
     position: sticky;
     top: 40px;
     z-index: 9;
+  }
+  .content-scroll {
+    height: calc(100% - 49px);
+    overflow: hidden;
   }
 </style>
