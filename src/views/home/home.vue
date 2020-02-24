@@ -3,13 +3,14 @@
     <nav-bar class="home-nav">
       <div slot="center">首页</div>
     </nav-bar>
-    <scroll class="content-scroll">
+    <scroll class="content-scroll" ref="scroll" :probe-type="3" @scroll="scrollTop">
       <home-swiper :banners="banners" />
       <Recommend-view :recommends="recommends"/>
       <feature-view />
       <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"/>
       <goods-list :goods="showgoods"/>
     </scroll>
+    <back-top @click.native="backclick" v-show="isShow"/>
   </div>
 </template>
 
@@ -18,6 +19,7 @@
   import Scroll from 'components/common/scroll/Scroll'
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goods/GoodsList'
+  import BackTop from 'components/content/backTop/BackTop'
 
   import HomeSwiper from './childComps/HomeSwiper'
   import RecommendView from './childComps/RecommendView'
@@ -37,7 +39,8 @@
           'new':{page: 0, list: []},
           'sell':{page: 0, list: []}
         },
-        currentType: 'pop'
+        currentType: 'pop',
+        isShow: false
       }
     },
     components: {
@@ -45,6 +48,7 @@
       Scroll,
       TabControl,
       GoodsList,
+      BackTop,
       HomeSwiper,
       RecommendView,
       FeatureView
@@ -56,7 +60,7 @@
     },
     methods: {
       /**
-       * 时间监听相关的方法
+       * 事件监听相关的方法
        */
       tabClick(index) {
         switch(index) {
@@ -69,6 +73,12 @@
           case 2: 
             this.currentType = 'sell'
         }
+      },
+      backclick() {
+        this.$refs.scroll.scrollTo(0, 0)
+      },
+      scrollTop(position) {
+        this.isShow = (-position.y) > 200
       },
       /**
        * 网络请求相关的方法
