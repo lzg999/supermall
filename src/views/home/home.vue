@@ -3,7 +3,7 @@
     <nav-bar class="home-nav">
       <div slot="center">首页</div>
     </nav-bar>
-    <scroll class="content-scroll" ref="scroll" :probe-type="3" @scroll="scrollTop">
+    <scroll class="content-scroll" ref="scroll" :probe-type="3" :pull-up-load="true" @scroll="scrollTop" @pullingUp="loadMore">
       <home-swiper :banners="banners" />
       <Recommend-view :recommends="recommends"/>
       <feature-view />
@@ -80,6 +80,11 @@
       scrollTop(position) {
         this.isShow = (-position.y) > 200
       },
+      loadMore() {
+        this.getHomeGoods(this.currentType)  
+            
+        this.$refs.scroll.scroll.refresh() 
+      },
       /**
        * 网络请求相关的方法
        */
@@ -94,6 +99,8 @@
         getHomeGoods(type, page).then(res => {
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page +=1
+
+          this.$refs.scroll.finishPullUp()
         })
       }
     },
