@@ -3,11 +3,12 @@
     <nav-bar class="home-nav">
       <div slot="center">首页</div>
     </nav-bar>
+    <tab-control class="tab-a" :titles="['流行', '新款', '精选']" @tabClick="tabClick" ref="tabcontrol1" v-show="isTabFixed"/>
     <scroll class="content-scroll" ref="scroll" :probe-type="3" :pull-up-load="true" @scroll="scrollTop" @pullingUp="loadMore">
-      <home-swiper :banners="banners" />
+      <home-swiper :banners="banners" @swiperLoad="swiperLoad"/>
       <Recommend-view :recommends="recommends"/>
       <feature-view />
-      <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"/>
+      <tab-control :titles="['流行', '新款', '精选']" @tabClick="tabClick" ref="tabcontrol2"/>
       <goods-list :goods="showgoods"/>
     </scroll>
     <back-top @click.native="backclick" v-show="isShow"/>
@@ -41,7 +42,9 @@
           'sell':{page: 0, list: []}
         },
         currentType: 'pop',
-        isShow: false
+        isShow: false,
+        taboffsetTop: 0,
+        isTabFixed: false
       }
     },
     components: {
@@ -73,18 +76,27 @@
             break
           case 2: 
             this.currentType = 'sell'
+            break
         }
+        this.$refs.tabcontrol1.currentIndex = index
+        this.$refs.tabcontrol2.currentIndex = index
       },
       backclick() {
         this.$refs.scroll.scrollTo(0, 0)
       },
       scrollTop(position) {
+        // 1.判断backTop是否显示
         this.isShow = (-position.y) > 200
+        
+        // 2.判断tabcontrol是否吸顶（position: fixed）
+        this.isTabFixed = (-position.y) > (this.taboffsetTop - 42)
       },
       loadMore() {
         this.getHomeGoods(this.currentType)  
       },
-
+      swiperLoad() {
+        this.taboffsetTop = this.$refs.tabcontrol2.$el.offsetTop
+      },
       /**
        * 网络请求相关的方法
        */
@@ -99,7 +111,7 @@
         getHomeGoods(type, page).then(res => {
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page +=1
-          
+
           this.$refs.scroll.finishPullUp()
         })
       }
@@ -121,25 +133,20 @@
 
 <style scoped>
   .container {
-    padding-top: 44px;
     height: 100vh;
+    position: relative;
   }
   .home-nav {
     background-color: var(--color-tint);
     color: #fff;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 9;
-  }
-  .tab-control {
-    position: sticky;
-    top: 40px;
-    z-index: 9;
   }
   .content-scroll {
-    height: calc(100% - 49px);
+    height: calc(100% - 93px);
     overflow: hidden;
+  }
+  .tab-a {
+    position: fixed;
+    width: 100%;
+    z-index: 9;
   }
 </style>
