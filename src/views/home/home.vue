@@ -27,6 +27,7 @@
   
 
   import {getHomeMultidata, getHomeGoods} from 'network/home'
+  import {debounce} from 'common/until'
 
   export default {
     name: "home",
@@ -82,9 +83,8 @@
       },
       loadMore() {
         this.getHomeGoods(this.currentType)  
-            
-        this.$refs.scroll.scroll.refresh() 
       },
+
       /**
        * 网络请求相关的方法
        */
@@ -99,7 +99,7 @@
         getHomeGoods(type, page).then(res => {
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page +=1
-
+          
           this.$refs.scroll.finishPullUp()
         })
       }
@@ -109,6 +109,12 @@
       this.getHomeGoods('pop')
       this.getHomeGoods('new')
       this.getHomeGoods('sell')
+    },
+    mounted() {
+      const refresh = debounce(this.$refs.scroll.refresh, 200)
+      this.$bus.$on('imgLoad', () => {
+        refresh()
+      })
     }
   }
 </script>
