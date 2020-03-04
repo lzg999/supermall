@@ -44,7 +44,8 @@
         currentType: 'pop',
         isShow: false,
         taboffsetTop: 0,
-        isTabFixed: false
+        isTabFixed: false,
+        saveY: 0
       }
     },
     components: {
@@ -115,6 +116,16 @@
           this.$refs.scroll.finishPullUp()
         })
       }
+    },
+    destroyed() {
+      console.log('Home已销毁')
+    },
+    activated() {
+      this.$refs.scroll.scrollTo(0, this.saveY, 0)
+      this.$refs.scroll.refresh()
+    },
+    deactivated() {
+      this.saveY = this.$refs.scroll.getScrollY()
     },
     created() {
       this.getHomeMultidata(),
