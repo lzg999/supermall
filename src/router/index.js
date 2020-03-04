@@ -3,15 +3,16 @@ import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
 const originalPush = Router.prototype.push
-Router.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err)
-}
+// Router.prototype.push = function push(location) {
+//   return originalPush.call(this, location).catch(err => err)
+// }
 
 
 const Home = () => import('../views/home/home')
 const ClassIfy = () => import('../views/classify/classify')
 const Shopcar = () => import('../views/shopcar/shopcar')
 const Profile = () => import('../views/profile/profile')
+const Detail = () => import('../views/detail/Detail')
 
 export default new Router({
   mode: 'history',
@@ -46,6 +47,13 @@ export default new Router({
       component: Profile,
       meta: {
         title: "我的"
+      }
+    },
+    {
+      path: "/detail",
+      component: Detail,
+      meta: {
+        title: "详情页"
       }
     },
   ]
