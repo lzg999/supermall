@@ -28,10 +28,7 @@ export default {
       this.$bus.$emit('imgLoad')
     },
     itemClick() {
-      // console.log(this.goodsItem.iid)
-      // this.$router.push('/detail' + this.goodsItem.iid)
       this.$router.push({ path: '/detail', query: { iid: this.goodsItem.iid} })
-      console.log('点击的id：' + this.goodsItem.iid)
     }
   }
 }
