@@ -67,10 +67,10 @@ export default {
       // 2.5.获取商品详情信息
       this.detailInfo = data.detailInfo;
 
-      // 2.6.获取参数信息
+      // 2.6. 获取参数信息
       this.paramInfo = new GoodsParam(data.itemParams.info, data.itemParams.rule);
 
-      // 2.7.获取评论信息
+      // 2.7. 获取评论信息
       if (data.rate.list) {
         this.commentInfo = data.rate.list[0];
       }
