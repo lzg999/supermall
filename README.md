@@ -1,4 +1,4 @@
-# supermall（参考大佬代码）
+# supermall（参考大佬代码做的demo）
 
 ## Project setup
 ```
