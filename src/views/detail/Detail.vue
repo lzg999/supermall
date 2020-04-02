@@ -8,6 +8,7 @@
       <detail-goods-info :detail-info="detailInfo" @imgLoad="imgLoad"></detail-goods-info>
       <detail-param-info :param-info="paramInfo"></detail-param-info>
       <detail-comment-info :comment-info="commentInfo"></detail-comment-info>
+      <goods-list :goods="recommends"></goods-list>
     </Scroll>
   </div>
 </template>
@@ -22,8 +23,10 @@
   import DetailCommentInfo from './childComps/DetailCommentInfo'
 
   import Scroll from 'components/common/scroll/Scroll'
+  import GoodsList from 'components/content/goods/GoodsList'
 
-  import {getDetail, Goods, Shop, GoodsParam} from 'network/detail'
+  import {getDetail, Goods, Shop, GoodsParam, getRecommend} from 'network/detail'
+  import {itemListenerMixin} from 'common/mixin'
 
 export default {
   name: 'Detail',
@@ -35,7 +38,8 @@ export default {
       shop: {},
       detailInfo: {},
       paramInfo: {},
-      commentInfo: {}
+      commentInfo: {},
+      recommends: []
     }
   },
   components: {
@@ -46,14 +50,15 @@ export default {
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
-    Scroll
+    Scroll,
+    GoodsList
   },
+  mixins: [itemListenerMixin],
   created() {
     this.iid = this.$route.query.iid
     getDetail(this.iid).then(res => {
       // 2.1.获取结果
       const data = res.result;
-      console.log(data)
 
       // 2.2.获取顶部信息
       this.topImgs = data.itemInfo.topImages;
@@ -74,12 +79,20 @@ export default {
       if (data.rate.list) {
         this.commentInfo = data.rate.list[0];
       }
+    }),
+    // 请求推荐数据
+    getRecommend().then(res => {
+      console.log(res)
+      this.recommends = res.data.list
     })
   },
   methods: {
     imgLoad() {
       this.$refs.scroll.refresh()
     }
+  },
+  destroyed() {
+    this.$bus.$off('imgLoad', this.itemImgListener)
   }
 }
 </script>

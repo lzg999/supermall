@@ -29,6 +29,7 @@
 
   import {getHomeMultidata, getHomeGoods} from 'network/home'
   import {debounce} from 'common/until'
+  import {itemListenerMixin} from 'common/mixin'
 
   export default {
     name: "home",
@@ -58,6 +59,7 @@
       RecommendView,
       FeatureView
     },
+    mixins: [itemListenerMixin],
     computed:{
       showgoods() {
         return this.goods[this.currentType].list
@@ -118,14 +120,18 @@
       }
     },
     destroyed() {
-      console.log('Home已销毁')
+      // console.log('Home已销毁')
     },
     activated() {
       this.$refs.scroll.scrollTo(0, this.saveY, 0)
       this.$refs.scroll.refresh()
     },
     deactivated() {
+      // 离开时保存y值
       this.saveY = this.$refs.scroll.getScrollY()
+
+      // 离开时移除全局事件的监听
+      this.$bus.$off('imgLoad', this.itemImgListener)
     },
     created() {
       this.getHomeMultidata(),
@@ -134,10 +140,10 @@
       this.getHomeGoods('sell')
     },
     mounted() {
-      const refresh = debounce(this.$refs.scroll.refresh, 200)
-      this.$bus.$on('imgLoad', () => {
-        refresh()
-      })
+      // const refresh = debounce(this.$refs.scroll.refresh, 200)
+      // this.$bus.$on('imgLoad', () => {
+      //   refresh()
+      // })
     }
   }
 </script>
