@@ -82,7 +82,6 @@ export default {
     }),
     // 请求推荐数据
     getRecommend().then(res => {
-      console.log(res)
       this.recommends = res.data.list
     })
   },
